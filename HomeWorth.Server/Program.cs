@@ -1,9 +1,12 @@
 using HomeWorth.Server.Data;
+using HomeWorth.Server.Interfaces;
 using HomeWorth.Server.Models;
+using HomeWorth.Server.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +57,35 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//jwt in swagger
+builder.Services.AddSwaggerGen(option =>
+{
+  option.SwaggerDoc("v1", new OpenApiInfo { Title = "HomeWorth", Version = "v1" });
+  option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+  {
+    In = ParameterLocation.Header,
+    Description = "Please enter a valid token",
+    Name = "Authorization",
+    Type = SecuritySchemeType.Http,
+    BearerFormat = "JWT",
+    Scheme = "Bearer"
+  });
+  option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+
 //connect angular client
 
 var allowedOrigins = builder.Configuration.GetValue<string>("allowedOrigins")!.Split(",");
@@ -66,8 +98,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
+
+//role seeding
+using (var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+  SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
