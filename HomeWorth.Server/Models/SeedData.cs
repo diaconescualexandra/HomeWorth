@@ -35,6 +35,7 @@ namespace HomeWorth.Server.Models
              new IdentityRole
             {Id = "562cb58b-85e3-4eb1-b125-93b81370016a", Name = "Guest", NormalizedName = "Guest".ToUpper() }
 
+           
         );
         //to create passwords
         var hasher = new PasswordHasher<ApplicationUser>();
