@@ -1,0 +1,103 @@
+<div class="container mx-auto px-4 py-8">
+
+<div *ngIf="loading" class="text-center p-4">Loading offers...</div>
+
+<div *ngIf="!loading && offers.length === 0" class="text-center p-4">
+  <p>No offers found.</p>
+</div>
+<div class="flex justify-end mb-4">
+  <div class="relative">
+    <button 
+      (click)="showSortDropdown = !showSortDropdown"
+      class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center inline-flex items-center"
+      type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
+      </svg>
+      Sort
+    </button>
+    <div *ngIf="showSortDropdown" class="absolute right-0 z-50 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44">
+      <ul class="py-2 text-sm text-gray-700">
+        <li>
+          <button (click)="setSortOption('Most Recent')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center">
+            Most Recent
+          </button>
+        </li>
+        <li>
+          <button (click)="setSortOption('Oldest')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center">
+            Oldest
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && offers.length > 0" class="grid gap-4">
+  <div *ngFor="let offer of sortedOffers" class="p-6 rounded-xl shadow-lg border border-gray-200 bg-white mb-4">
+  <span class="block text-indigo-700 font-bold text-xl mb-2">
+    {{ offer.propertyTitle }}
+  </span>
+  <div class="text-gray-600 mb-2">
+    <ng-container *ngIf="isSeller">
+      <span class="font-medium">Offer From:</span> {{ offer.firstName }}
+    </ng-container>
+  </div>
+  <div class="flex flex-col gap-1">
+    <span><strong>Amount: </strong> <span class="text-green-700 font-semibold">${{ offer.offeredAmount }}</span></span>
+    <span>
+      <strong>Status:</strong>
+      <span [ngClass]="{
+        'text-green-600': offer.status === OfferStatus.ACCEPTED,
+        'text-red-600': offer.status === OfferStatus.DECLINED,
+        'text-blue-600': offer.status === OfferStatus.VIEWED,
+        'text-yellow-600': offer.status === OfferStatus.IN_PROGRESS,
+        'text-gray-600': offer.status === OfferStatus.EXPIRED
+      }">
+        {{ getStatusLabel(offer.status) }}
+      </span>
+    </span>
+  </div>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-4 space-x-4 mb-5">
+  <button 
+    (click)="onPageChange(page - 1)" 
+    [disabled]="page === 1"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Previous page"
+  >
+    <svg 
+      class="w-14 h-2.5 me-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6"
+      stroke="currentColor"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+
+  <span class="px-4 py-2 text-indigo-700 font-medium select-none">{{ page }}</span>
+
+  <button 
+    (click)="onPageChange(page + 1)" 
+    [disabled]="page * pageSize >= totalCount"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Next page"
+  >
+    <svg 
+      class="w-14 h-2.5 ms-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6" 
+      stroke="currentColor"
+      style="transform: scaleX(-1);"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+</div>

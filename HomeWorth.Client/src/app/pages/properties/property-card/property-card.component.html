@@ -1,0 +1,152 @@
+<!-- property-card.component.html with auth integration -->
+<div *ngIf="isVisible" class="w-full flex items-center justify-center mt-10">
+  <div class="relative flex flex-row items-start bg-white border w-[800px] h-[180px] mb-3 border-gray-200 rounded-lg shadow-sm hover:border-indigo-200"
+    [ngClass]="{'cursor-pointer': !isSeller}"
+    (click)="!isSeller ? navigateToDetails(propertyData.propertyId) : null">
+
+    <!-- Buyer/Unauthenticated User Actions -->
+    <ng-container *ngIf="isFavoritePage">
+      <button (click)="toggleFavorite($event)"
+        class="absolute top-3 right-3 z-10 text-indigo-500 hover:text-indigo-600">
+        <svg 
+          [ngClass]="{'text-indigo-500 fill-indigo-500': isFavorite, 'text-gray-400': !isFavorite}"
+          xmlns="http://www.w3.org/2000/svg" [attr.fill]="isFavorite ? 'currentColor' : 'none'" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </svg>
+      </button>
+    </ng-container>
+    
+    <!-- Heart for All Properties Page (not seller, not favorites page) -->
+    <ng-container *ngIf="!isSeller && !isFavoritePage && !isAdminView">
+      <button (click)="toggleFavorite($event)"
+        class="absolute top-3 right-3 z-10 text-indigo-500 hover:text-indigo-600">
+        <svg 
+          [ngClass]="{'text-indigo-500 fill-indigo-500': isFavorite, 'text-gray-400': !isFavorite}"
+          xmlns="http://www.w3.org/2000/svg" [attr.fill]="isFavorite ? 'currentColor' : 'none'" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </svg>
+      </button>
+    </ng-container>
+
+    <!-- Seller Actions (only show if user is a seller AND owns this property) -->
+    <ng-container *ngIf="isSeller && isPropertyOwner()">
+      <div class="absolute top-3 right-3 z-10 text-gray-500 flex gap-x-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-6 text-indigo-500">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        {{ propertyData.views?.viewsCount || 0 }}
+      </div>
+
+      <div class="absolute top-3 left-160 z-10">
+      <div [ngClass]="{
+          'bg-green-100 text-green-800': propertyData.status === PropertyStatus.Accepted,
+          'bg-red-100 text-red-800': propertyData.status === PropertyStatus.Rejected,
+          'bg-yellow-100 text-yellow-800': propertyData.status === PropertyStatus.Pending
+        }" 
+        class="flex items-center px-3 py-1 rounded-full text-xs font-medium">
+          <svg *ngIf="propertyData.status === PropertyStatus.Accepted" class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg *ngIf="propertyData.status === PropertyStatus.Rejected" class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg *ngIf="propertyData.status === PropertyStatus.Pending" class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {{ PropertyStatus[propertyData.status] }}
+        </div>
+    </div>
+      
+
+      <div class="absolute bottom-4 right-4 flex flex-row gap-2">
+        <button type="button" (click)="emitNavigateToEdit($event)"
+          class="w-16 text-white bg-green-700 hover:bg-green-800 font-medium rounded-full text-xs px-3 py-1.5 text-center">
+          Edit
+        </button>
+        <button type="button" (click)="emitDeleteProperty($event)"
+          class="w-16 text-white bg-red-700 hover:bg-red-800 font-medium rounded-full text-xs px-3 py-1.5 text-center">
+          Delete
+        </button>
+        <div class ="flex flex-row">
+        <button type="button" (click)="emitNavigateToOffers($event)"
+          class="w-20 text-white bg-indigo-700 hover:bg-blue-800 font-medium rounded-full text-xs px-3 py-1.5 text-center">
+          Offers ({{getOffersCount()}})
+        </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Admin   -->
+      <div *ngIf="isAdminView" class="absolute top-3 right-3 z-20 flex flex-col items-end gap-2">
+        <!-- Status badge -->
+        <div [ngClass]="{
+          'bg-green-100 text-green-800': propertyData.status === PropertyStatus.Accepted,
+          'bg-red-100 text-red-800': propertyData.status === PropertyStatus.Rejected,
+          'bg-yellow-100 text-yellow-800': propertyData.status === PropertyStatus.Pending
+        }" 
+        class="px-3 py-1.5 rounded-full text-xs font-medium">
+          {{ PropertyStatus[propertyData.status] }}
+        </div>
+
+        <!-- Action buttons - Only show Accept for Pending properties -->
+        <div class="flex gap-2">
+          <button 
+            *ngIf="propertyData.status === PropertyStatus.Pending"
+            (click)="updatePropertyStatus(PropertyStatus.Accepted, $event)"
+            class="px-3 py-1.5 bg-green-600 text-white rounded-full text-xs font-medium hover:bg-green-700">
+            Accept
+          </button>
+          <button 
+            *ngIf="propertyData.status !== PropertyStatus.Rejected"
+            (click)="updatePropertyStatus(PropertyStatus.Rejected, $event)"
+            class="px-3 py-1.5 bg-red-600 text-white rounded-full text-xs font-medium hover:bg-red-700">
+            Reject
+          </button>
+        </div>
+      </div>
+
+      <!-- Add seller info for admin view -->
+      <div *ngIf="isAdminView" class="absolute bottom-3 right-3 flex items-center gap-2 text-sm text-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+        </svg>
+        <span>Seller: {{ propertyData.sellerFirstName }}</span>
+      </div>
+
+    <!-- Common Content -->
+   <div class="h-full w-64 min-h-[180px] max-h-full">
+      <img
+        [src]="propertyData.images?.[0]?.imageUrl || 'https://picsum.photos/240/240'"
+        class="object-cover w-full h-full rounded-t-lg md:rounded-none md:rounded-s-lg"
+        alt="Property Image"
+        (error)="onImageError($event)"
+      />
+</div>
+    <div class="flex flex-col p-4 flex-grow space-y-3">
+      <p class="text-2xl font-bold text-gray-900">
+        {{propertyData.price | currency:'EUR':'symbol'}}
+      </p>
+      <h5 class="text-xl font-semibold text-gray-900">{{propertyData.title}}</h5>
+      <p class="text-sm text-gray-600 line-clamp-2">
+        {{propertyData.description}}
+      </p>
+      <div class="flex items-center gap-1 text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          class="size-4 text-indigo-500" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+        </svg>
+        <span class="text-sm">{{propertyData.city}}, {{propertyData.neighborhood}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+

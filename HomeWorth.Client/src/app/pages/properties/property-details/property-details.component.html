@@ -1,0 +1,175 @@
+<!-- Loading state -->
+<div *ngIf="isLoading" class="container mx-auto flex justify-center items-center h-screen">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500"></div>
+</div>
+
+
+
+<!-- Property details content - only show when loaded -->
+<div *ngIf="!isLoading" class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto rounded-lg overflow-hidden">
+        <!-- Image Section with Loading State -->
+        <div class="relative h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+            <!-- Main Image -->
+            <img [src]="currentImage" 
+                (load)="onImageLoad()"
+                class="w-full h-full object-cover"
+                [class.opacity-0]="isImageLoading"
+                [class.opacity-100]="!isImageLoading"
+                [alt]="'Property Image ' + (currentImageIndex + 1)">
+
+                <button 
+                *ngIf="currentImageIndex > 0"
+                (click)="previousImage()"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-500 bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            
+            <button 
+                *ngIf="propertyDetails.images && currentImageIndex < propertyDetails.images.length - 1"
+                (click)="nextImage()"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-500 bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        
+            <!-- Image Counter -->
+            <div class="absolute bottom-4 right-4 bg-gray-500 bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                {{currentImageIndex + 1}} / {{propertyDetails.images?.length || 1}}
+            </div>
+
+            <button (click)="toggleFavorite()" class="absolute top-4 right-4 p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" [attr.fill]="isFavorite ? 'currentColor' : 'none'"
+                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-indigo-500">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-8 mb-2 gap-2 max-w-4xl">
+            <h2 class="text-xl font-semibold mb-4">Location</h2>
+            <div id="map" class="h-[400px] rounded-lg"></div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="p-8 max-w-4xl">
+            <div class="flex items-center justify-between mb-4">
+                <!-- Price -->
+                <p class="text-3xl font-bold text-gray-900">
+                  {{propertyDetails.price | currency:'EUR':'symbol'}}
+                </p>
+              
+                <div class="h-15 w-20">
+                  <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" class="h-full w-full">
+                    <!-- Left wedge with rounded tip -->
+                    <path d="M 25 100 
+                             A 75 75 0 0 1 65 25 
+                             L 93 87
+                             Q 97 92, 93 94
+                             Z" 
+                             [attr.fill]="priceCategory === 'Under Medium' ? '#6366f1' : '#a3a3a3'" />
+                    
+                    <!-- Middle wedge with rounded tip - lifted higher -->
+                    <path d="M 70 25 
+                             A 75 75 0 0 1 130 25 
+                             L 103 82
+                             Q 100 87, 97 82
+                             Z" 
+                             [attr.fill]="priceCategory === 'Medium' ? '#6366f1' : '#a3a3a3'" />
+                    
+                    <!-- Right wedge with rounded tip -->
+                    <path d="M 135 25 
+                             A 75 75 0 0 1 175 100 
+                             L 107 94
+                             Q 103 92, 107 87
+                             Z" 
+                             [attr.fill]="priceCategory === 'Over' ? '#6366f1' : '#a3a3a3'" />
+                  </svg>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">
+                {{propertyDetails.title}}
+            </h1>
+
+            <!-- Location -->
+            <div class="flex items-center gap-2 text-gray-600 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                    stroke-width="1.5" class="w-5 h-5 text-indigo-500" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" 
+                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" 
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                <span>{{propertyDetails.address}}, {{propertyDetails.city}}, {{propertyDetails.neighborhood}}</span>
+            </div>
+
+            <!-- Property Details Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500 text-sm">Rooms</p>
+                    <p class="text-lg font-semibold text-gray-900">{{propertyDetails.noOfRooms}}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500">Size</p>
+                    <p class="text-lg font-semibold text-gray-900">{{propertyDetails.size}} m²</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500">Year Built</p>
+                    <p class="text-lg font-semibold text-gray-900">{{propertyDetails.yearBuilt}}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500">Property Type</p>
+                    <p class="text-lg font-semibold text-gray-900">{{getPropertyTypeText(propertyDetails.propertyType)}}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500">Distance to city Center</p>
+                    <p class="text-lg font-semibold text-gray-900">{{propertyDetails.distanceToCityCenter}}</p>
+                </div>
+                <div *ngIf="propertyDetails.floorNo" class="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <p class="text-gray-500">Floor</p>
+                    <p class="text-lg font-semibold text-gray-900">{{propertyDetails.floorNo}}</p>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Description</h2>
+                <p class="text-gray-600">{{propertyDetails.description}}</p>
+            </div>
+
+            <!-- Facilities -->
+            <div class="mb-8" *ngIf="propertyDetails.facilities && propertyDetails.facilities.length > 0">
+                <h2 class="text-xl font-semibold mb-4">Facilities</h2>
+                <div class="flex flex-wrap gap-2">
+                    <div *ngFor="let facility of propertyDetails.facilities" 
+                         class="bg-gray-100 text-gray-700 text-sm px-4 py-2 rounded-full">
+                        {{facility.facilityName}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Place an offer section - only show for buyers -->
+            <div *ngIf="isBuyer" class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Place an offer</h2>
+                <div class="flex items-start gap-x-4">
+                    <input type="number" placeholder="Enter your offer price"
+                    class="outline outline-gray-300 hover:outline-gray-500 focus:outline-gray-500 rounded-full mb-3 p-2"
+                    min="0" required
+                    [(ngModel)]="offerPrice">
+                    <button
+                    (click)="placeOffer()"
+                    class="text-white bg-orange-600 hover:bg-orange-800 font-medium rounded-full text-sm px-8 py-3 text-center">
+                    Place an offer
+                    </button>
+                </div>
+                <div *ngIf="offerError" class="text-red-600 text-sm mt-1">{{ offerError }}</div>
+            </div>
+        </div>
+    </div>
+</div>

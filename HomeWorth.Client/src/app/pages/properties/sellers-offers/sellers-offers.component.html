@@ -1,0 +1,130 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">
+      Offers for {{ propertyTitle }}
+    </h1>
+    <button (click)="navigateBack()" class="text-gray-600 hover:text-gray-800">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+      </svg>
+    </button>
+  </div>
+
+  <div *ngIf="offers.length === 0" class="text-center py-12">
+    <p class="text-lg text-gray-600">No offers have been made for this property yet</p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4">
+  <div *ngFor="let offer of actionableOffers"
+    class="border border-gray-200 rounded-lg p-4 hover:border-indigo-200 transition-colors duration-200">
+    <div class="flex justify-between items-center">
+      <div class="flex flex-col">
+        <span class="text-2xl font-bold text-indigo-600">
+          {{ offer.offeredAmount | currency:'EUR':'symbol' }}
+        </span>
+        <span class="text-sm text-gray-500">
+          Offered on: {{ offer.createdAt.toLocaleString() | date:'short' }}
+        </span>
+
+        <!-- Buyer Info - shown after interested is clicked -->
+        <div *ngIf="offer.showBuyerInfo" class="mt-2 text-sm text-gray-700">
+          <div>Buyer Email: {{ offer.email }}</div>
+          <div>Buyer Phone: {{ offer.phoneNumber }}</div>
+          <div>Buyer Name: {{ offer.firstName + ' ' + offer.lastName }}</div>
+        </div>
+
+        <!-- Expired Message -->
+        <div *ngIf="isOfferExpired(offer)" class="mt-2 text-red-600 font-medium">
+          Offer Expired
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row sm:space-x-2 mt-2 sm:mt-0">
+        <!-- Initial State - Show Interested button -->
+        <button *ngIf="!offer.showBuyerInfo && offer.status === OfferStatus.IN_PROGRESS"
+          (click)="revealBuyerInfo(offer)"
+          class="px-4 py-2 mb-2 sm:mb-0 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          Interested
+        </button>
+
+        <!-- After Interested - Show Accept/Reject buttons -->
+        <ng-container *ngIf="offer.showBuyerInfo && !isOfferExpired(offer)">
+          <button *ngIf="offer.status === OfferStatus.VIEWED"
+            (click)="acceptOffer(offer.offerId)"
+            class="px-4 py-2 mb-2 sm:mb-0 bg-green-600 text-white rounded-md hover:bg-green-700">
+            Accept
+          </button>
+
+          <button *ngIf="offer.status === OfferStatus.VIEWED"
+            (click)="rejectOffer(offer.offerId)"
+            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            Reject
+          </button>
+        </ng-container>
+
+        <!-- Status Indicators -->
+        <button *ngIf="offer.status === OfferStatus.ACCEPTED"
+          class="px-4 py-2 text-green-600 bg-green-50 border border-gray-100 rounded-md"
+          disabled>
+          Accepted
+        </button>
+
+        <button *ngIf="offer.status === OfferStatus.DECLINED"
+          class="px-4 py-2 text-red-600 bg-red-50 border border-gray-100 rounded-md"
+          disabled>
+          Rejected
+        </button>
+
+        <button *ngIf="offer.status === OfferStatus.EXPIRED"
+          class="px-4 py-2 text-gray-600 bg-gray-50 border border-gray-100 rounded-md"
+          disabled>
+          Expired
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="flex justify-center mt-4 space-x-4 mb-5">
+  <button 
+    (click)="onPageChange(page - 1)" 
+    [disabled]="page === 1"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Previous page"
+  >
+    <svg 
+      class="w-14 h-2.5 me-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6"
+      stroke="currentColor"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+
+  <span class="px-4 py-2 text-indigo-700 font-medium select-none">{{ page }}</span>
+
+  <button 
+    (click)="onPageChange(page + 1)" 
+    [disabled]="page * pageSize >= totalCount"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Next page"
+  >
+    <svg 
+      class="w-14 h-2.5 ms-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6" 
+      stroke="currentColor"
+      style="transform: scaleX(-1);"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+</div>

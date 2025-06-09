@@ -1,0 +1,47 @@
+<app-property-card
+  *ngFor="let property of favoriteProperties"
+  [property]="property"
+  [isFavoritePage]="true"
+  [isFavorite]="true"
+  (favoriteToggled)="handleFavoriteToggle($event)">
+</app-property-card>
+<div class="flex justify-center mt-4 space-x-4 mb-5">
+  <button 
+    (click)="onPageChange(page - 1)" 
+    [disabled]="page === 1"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Previous page"
+  >
+    <svg 
+      class="w-14 h-2.5 me-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6"
+      stroke="currentColor"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+
+  <span class="px-4 py-2 text-indigo-700 font-medium select-none">{{ page }}</span>
+
+  <button 
+    (click)="onPageChange(page + 1)" 
+    [disabled]="page * pageSize >= totalCount"
+    class="flex items-center p-2 rounded disabled:text-gray-300 transition-colors text-gray-400 hover:text-gray-700 "
+    aria-label="Next page"
+  >
+    <svg 
+      class="w-14 h-2.5 ms-2 rtl:rotate-180" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 20 6" 
+      stroke="currentColor"
+      style="transform: scaleX(-1);"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 3H1m0 0 5 5M1 3l5-5"/>
+    </svg>
+  </button>
+</div>

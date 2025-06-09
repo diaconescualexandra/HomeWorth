@@ -1,0 +1,76 @@
+<div class="notification-bell">
+  <!-- Bell Button (fixed top right) -->
+  <button (click)="togglePanel()"
+    class="fixed top-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg hover:bg-indigo-100 transition-colors duration-200 focus:outline-none border border-gray-200">
+    <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
+    <span *ngIf="unreadCount > 0"
+      class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow">
+      {{ unreadCount }}
+    </span>
+  </button>
+
+  
+
+  <!-- Side Panel -->
+  <div *ngIf="showPanel"
+    class="fixed right-6 top-20 w-[370px] max-w-full h-[540px] bg-white shadow-2xl z-50 rounded-xl border border-gray-200 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div class="text-2xl font-semibold leading-6 text-gray-800">Notifications</div>
+      <button (click)="togglePanel()" class="text-gray-400 hover:text-gray-700 text-2xl transition-colors">&times;</button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3">
+      
+
+      <div *ngIf="notifications.length === 0" class="text-gray-400 text-center mt-8 text-base">No notifications</div>
+      <div *ngFor="let notif of notifications; trackBy: trackByNotificationId"
+        class="rounded-lg p-4 flex items-start gap-3 border border-transparent hover:border-indigo-200 transition-colors duration-300 shadow-sm"
+        [ngClass]="notif.isRead ? 'bg-white' : 'bg-indigo-50'">
+        <div>
+          <ng-container [ngSwitch]="notif.type">
+            <span *ngSwitchCase="NotificationType.OfferReceived" class="inline-block w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 4v16m8-8H4" />
+              </svg>
+            </span>
+            <span *ngSwitchCase="NotificationType.OfferAccepted" class="inline-block w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
+            <span *ngSwitchCase="NotificationType.OfferDeclined" class="inline-block w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+            <span *ngSwitchCase="NotificationType.ContactShared" class="inline-block w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </span>
+            <span *ngSwitchCase="NotificationType.OfferViewed" class="inline-block w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01" />
+              </svg>
+            </span>
+             <span *ngSwitchDefault class="inline-block w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2" />
+              </svg>
+            </span>
+          </ng-container>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium text-base leading-tight" [ngClass]="notif.isRead ? 'text-gray-700' : 'text-indigo-800'">{{ notif.message }}</div>
+          <div class="text-xs text-gray-400 mt-1">{{ notif.createdAt | date:'short'}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

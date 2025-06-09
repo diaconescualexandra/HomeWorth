@@ -7,7 +7,10 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-
+import { AuthService } from '../../services/auth-service';
+import { NewUserDto } from '../../models/new-user-dto.model';
+import { Router } from '@angular/router';
+import { first } from 'rxjs';
 @Component({
   selector: 'app-register',
   imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
@@ -17,27 +20,56 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class RegisterComponent {
   registrationForm: FormGroup;
-  
+  showPassword: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private router: Router) {
     {
       this.registrationForm = this.fb.group({
-        name: ['', Validators.required],
+        name: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(10)]],
+        password: ['', [Validators.required, Validators.minLength(5)]],
+        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+        FirstName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+        LastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
       });
     }
   }
 
-  //TODO: password validators same as backend
-  onSubmit(): void {
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  registerAs(role: string) {
     if (this.registrationForm.valid) {
-      console.log('Form Data:', this.registrationForm.value); // Form values on submission
+      const formValues = this.registrationForm.value;
+      
+      this.authService.register(
+        formValues.name, 
+        formValues.email, 
+        formValues.password, 
+        formValues.phoneNumber,
+        formValues.FirstName,
+        formValues.LastName,
+        role
+      ).subscribe(
+        result => {
+          console.log('Registration successful:', result);
+          this.registrationForm.reset();  
+          this.router.navigate(['/login']);  
+        },
+        error => {
+          console.error('Registration failed:', error);
+        }
+      );
     } else {
       console.log('Form is invalid.');
     }
   }
-
-
+  
 
 }
+
+
