@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,8 +40,11 @@ namespace HomeWorth.Server.Controllers
 
         var applicationUser = new ApplicationUser
         {
-          UserName = registerDto.Name,
-          Email = registerDto.Email
+          UserName = registerDto.Name.ToLower(),
+          Email = registerDto.Email.ToLower(),
+          PhoneNumber = registerDto.PhoneNumber,
+          FirstName = registerDto.FirstName,
+          LastName = registerDto.LastName
         };
 
         var createUser = await _userManager.CreateAsync(applicationUser, registerDto.Password);
@@ -60,6 +64,7 @@ namespace HomeWorth.Server.Controllers
               {
                 UserName = applicationUser.UserName,
                 Email = applicationUser.Email,
+                PhoneNumber = applicationUser.PhoneNumber,
                 Token = _tokenService.CreateToken(applicationUser)
               });
 
@@ -86,17 +91,20 @@ namespace HomeWorth.Server.Controllers
 
       var applicationUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Name.ToLower());
 
-      if (applicationUser == null) return Unauthorized("Invalid username!");
+      if (applicationUser == null) return BadRequest("Invalid username!");
 
       var result = await _signInManager.CheckPasswordSignInAsync(applicationUser, loginDto.Password, false);
 
-      if (!result.Succeeded) return Unauthorized("Username not found");
+      if (!result.Succeeded) return Unauthorized(new { message = "Invalid password" });
 
       return Ok(
         new NewUserDto
         {
           UserName = applicationUser.UserName,
           Email = applicationUser.Email,
+          PhoneNumber = applicationUser.PhoneNumber,
+          FirstName = applicationUser.FirstName,
+          LastName = applicationUser.LastName,
           Token = _tokenService.CreateToken(applicationUser)
         });
     }

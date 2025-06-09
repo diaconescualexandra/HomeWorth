@@ -52,7 +52,10 @@ namespace HomeWorth.Server.Models
             NormalizedEmail = "ADMIN@TEST.COM",
             Email = "admin@test.com",
             NormalizedUserName = "ADMIN@TEST.COM",
-            PasswordHash = hasher.HashPassword(null, "Admin1!")
+            PasswordHash = hasher.HashPassword(null, "Admin1!"),
+            FirstName = "Admin",
+            LastName = "Admin",
+            PhoneNumber ="1234567890",
           },
 
           new ApplicationUser
@@ -63,7 +66,10 @@ namespace HomeWorth.Server.Models
             NormalizedEmail = "SELLER@TEST.COM",
             Email = "seller@test.com",
             NormalizedUserName = "SELLER@TEST.COM",
-            PasswordHash = hasher.HashPassword(null, "Seller1!")
+            PasswordHash = hasher.HashPassword(null, "Seller1!"),
+            FirstName = "Seller",
+            LastName = "Seller",
+            PhoneNumber = "1234567899",
           },
 
           new ApplicationUser
@@ -74,7 +80,10 @@ namespace HomeWorth.Server.Models
             NormalizedEmail = "BUYER@TEST.COM",
             Email = "buyer@test.com",
             NormalizedUserName = "BUYER@TEST.COM",
-            PasswordHash = hasher.HashPassword(null, "Buyer1!")
+            PasswordHash = hasher.HashPassword(null, "Buyer1!"),
+            FirstName = "Buyer",
+            LastName = "Buyer",
+            PhoneNumber = "1234567895",
           },
 
           new ApplicationUser
@@ -85,7 +94,10 @@ namespace HomeWorth.Server.Models
             NormalizedEmail = "GUEST@TEST.COM",
             Email = "guest@test.com",
             NormalizedUserName = "GUEST@TEST.COM",
-            PasswordHash = hasher.HashPassword(null, "Guest1!")
+            PasswordHash = hasher.HashPassword(null, "Guest1!"),
+            FirstName = "Guest",
+            LastName = "Guest",
+            PhoneNumber = "1234567891",
           }
       );
 

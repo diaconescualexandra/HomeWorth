@@ -41,6 +41,14 @@ namespace HomeWorth.Server.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -85,6 +93,322 @@ namespace HomeWorth.Server.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Facility", b =>
+                {
+                    b.Property<int>("facilityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("facilityId"));
+
+                    b.Property<string>("facilityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("facilityId");
+
+                    b.ToTable("Facilities");
+
+                    b.HasData(
+                        new
+                        {
+                            facilityId = 1,
+                            facilityName = "Swimming Pool"
+                        },
+                        new
+                        {
+                            facilityId = 2,
+                            facilityName = "Gym"
+                        },
+                        new
+                        {
+                            facilityId = 4,
+                            facilityName = "Security"
+                        },
+                        new
+                        {
+                            facilityId = 5,
+                            facilityName = "Elevator"
+                        },
+                        new
+                        {
+                            facilityId = 6,
+                            facilityName = "Children's Play Area"
+                        },
+                        new
+                        {
+                            facilityId = 7,
+                            facilityName = "Garden"
+                        },
+                        new
+                        {
+                            facilityId = 8,
+                            facilityName = "Garage"
+                        },
+                        new
+                        {
+                            facilityId = 9,
+                            facilityName = "Balcony"
+                        },
+                        new
+                        {
+                            facilityId = 10,
+                            facilityName = "Air Conditioning"
+                        },
+                        new
+                        {
+                            facilityId = 11,
+                            facilityName = "Heating"
+                        },
+                        new
+                        {
+                            facilityId = 12,
+                            facilityName = "Solar Panels"
+                        },
+                        new
+                        {
+                            facilityId = 13,
+                            facilityName = "Outdoor Seating Area"
+                        });
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Favourite", b =>
+                {
+                    b.Property<int>("favouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("favouriteId"));
+
+                    b.Property<string>("buyerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("propertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("favouriteId");
+
+                    b.HasIndex("buyerId");
+
+                    b.HasIndex("propertyId");
+
+                    b.ToTable("Favourites");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Image", b =>
+                {
+                    b.Property<Guid>("imageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("imageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isFirst")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("propertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("imageId");
+
+                    b.HasIndex("propertyId");
+
+                    b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("phoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Offer", b =>
+                {
+                    b.Property<int>("offerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("offerId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("buyerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("offeredAmount")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("propertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("IN_PROGRESS");
+
+                    b.HasKey("offerId");
+
+                    b.HasIndex("buyerId");
+
+                    b.HasIndex("propertyId");
+
+                    b.ToTable("Offers");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Property", b =>
+                {
+                    b.Property<Guid>("propertyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PropertyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SellerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("city")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("distanceToCityCenter")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("neighborhood")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("noOfRooms")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("price")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sellerFirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("size")
+                        .HasColumnType("int");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("yearBuilt")
+                        .HasColumnType("int");
+
+                    b.HasKey("propertyId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("Properties");
+
+                    b.HasDiscriminator<int>("PropertyType").HasValue(0);
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.PropertyFacility", b =>
+                {
+                    b.Property<Guid>("propertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("facilityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("propertyId", "facilityId");
+
+                    b.HasIndex("facilityId");
+
+                    b.ToTable("PropertyFacilities");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.PropertyView", b =>
+                {
+                    b.Property<int>("propertyViewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("propertyViewId"));
+
+                    b.Property<string>("buyerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("propertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("viewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("viewsCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("propertyViewId");
+
+                    b.HasIndex("buyerId");
+
+                    b.HasIndex("propertyId");
+
+                    b.ToTable("PropertyViews");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -224,6 +548,135 @@ namespace HomeWorth.Server.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HomeWorth.Server.Models.Flat", b =>
+                {
+                    b.HasBaseType("HomeWorth.Server.Models.Property");
+
+                    b.Property<int>("floorNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalFloors")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.House", b =>
+                {
+                    b.HasBaseType("HomeWorth.Server.Models.Property");
+
+                    b.Property<int>("noOfFloors")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Favourite", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.ApplicationUser", "Buyer")
+                        .WithMany("Favourites")
+                        .HasForeignKey("buyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HomeWorth.Server.Models.Property", "Property")
+                        .WithMany("Favourites")
+                        .HasForeignKey("propertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Image", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.Property", "Property")
+                        .WithMany("images")
+                        .HasForeignKey("propertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Notification", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Offer", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.ApplicationUser", "Buyer")
+                        .WithMany("Offers")
+                        .HasForeignKey("buyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HomeWorth.Server.Models.Property", "Property")
+                        .WithMany("Offers")
+                        .HasForeignKey("propertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Property", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.ApplicationUser", "Seller")
+                        .WithMany("Properties")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.PropertyFacility", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.Facility", "Facility")
+                        .WithMany("PropertyFacilities")
+                        .HasForeignKey("facilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeWorth.Server.Models.Property", "Property")
+                        .WithMany("PropertyFacilities")
+                        .HasForeignKey("propertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Facility");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.PropertyView", b =>
+                {
+                    b.HasOne("HomeWorth.Server.Models.ApplicationUser", "Buyer")
+                        .WithMany("PropertyViews")
+                        .HasForeignKey("buyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HomeWorth.Server.Models.Property", "Property")
+                        .WithMany("PropertyViews")
+                        .HasForeignKey("propertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -273,6 +726,35 @@ namespace HomeWorth.Server.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Favourites");
+
+                    b.Navigation("Offers");
+
+                    b.Navigation("Properties");
+
+                    b.Navigation("PropertyViews");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Facility", b =>
+                {
+                    b.Navigation("PropertyFacilities");
+                });
+
+            modelBuilder.Entity("HomeWorth.Server.Models.Property", b =>
+                {
+                    b.Navigation("Favourites");
+
+                    b.Navigation("Offers");
+
+                    b.Navigation("PropertyFacilities");
+
+                    b.Navigation("PropertyViews");
+
+                    b.Navigation("images");
                 });
 #pragma warning restore 612, 618
         }

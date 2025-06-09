@@ -1,0 +1,29 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace HomeWorth.Server.Data.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddDistanceToCityCenter : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<int>(
+                name: "distanceToCityCenter",
+                table: "Properties",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "distanceToCityCenter",
+                table: "Properties");
+        }
+    }
+}
