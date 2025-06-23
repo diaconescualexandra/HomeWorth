@@ -1,5 +1,5 @@
 <div class="flex items-center justify-center mt-20 p-6 gap-4 pb-20" title="Container for property add">
-    <div class="outline rounded-xl outline-gray-300 w-full max-w-2xl p-8 shadow-2xl shadow-blue-700/20">
+    <div class="outline rounded-xl outline-gray-300 w-full max-w-4xl p-8 shadow-2xl shadow-blue-700/20">
         <div class="text-slate-700 font-semibold p-3 text-3xl mb-3">Add a property</div>
 
         <form [formGroup]="addPropertyForm" (ngSubmit)="submitForm()">
@@ -71,7 +71,7 @@
                 (addPropertyForm.get('neighborhood')?.touched || addPropertyForm.get('neighborhood')?.dirty)}"
                 formControlName="neighborhood" 
                 required>
-                <option [value]="null" disabled>Select neighborhood</option>
+                <option [value]="" disabled selected>Select neighborhood</option>
                 <option *ngFor="let neighborhood of availableNeighborhoods" [value]="neighborhood">
                     {{neighborhood}}
                 </option>

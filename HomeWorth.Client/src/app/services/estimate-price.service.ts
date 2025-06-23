@@ -21,7 +21,7 @@ export class EstimatePriceService {
   }
 
   estimateOtherCityPrice(data: any, city: string): Observable<any> {
-    const prompt = `Estimate the current market price for a ${data.Type} property with ${data.Rooms} rooms and ${data.Landsize} square meters land size, located in ${data.Suburb}, ${city}. The property is ${data.Distance}km from the city center. Provide only the estimated price range in local currency format.`;
+    const prompt = `Estimate the current market price for a ${data.Type} property with ${data.Rooms} rooms and ${data.Landsize} square meters land size, located in ${data.Suburb}, ${city}. The property is ${data.Distance}km from the city center. Provide only the estimated price in euro currency.`;
 
     return this.http.post(this.deepSeekUrl, {
       model: 'deepseek-chat',

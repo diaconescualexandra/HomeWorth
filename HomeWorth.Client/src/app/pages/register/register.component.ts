@@ -5,6 +5,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
@@ -30,8 +32,8 @@ export class RegisterComponent {
       this.registrationForm = this.fb.group({
         name: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(5)]],
-        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+        password: ['', [Validators.required, this.passwordValidator]],
+        phoneNumber: ['', [Validators.required, this.phoneNumberValidator]],
         FirstName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
         LastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
       });
@@ -40,6 +42,49 @@ export class RegisterComponent {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  phoneNumberValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+    
+    const phonePattern = /^\d{10}$/;
+    return phonePattern.test(value) ? null : { phoneNumber: true };
+  }
+
+  // Custom validator for password with all requirements
+  passwordValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const errors: ValidationErrors = {};
+
+    // Minimum length of 10
+    if (value.length < 10) {
+      errors['minLength'] = true;
+    }
+
+    // Require digit
+    if (!/\d/.test(value)) {
+      errors['requireDigit'] = true;
+    }
+
+    // Require lowercase
+    if (!/[a-z]/.test(value)) {
+      errors['requireLowercase'] = true;
+    }
+
+    // Require uppercase
+    if (!/[A-Z]/.test(value)) {
+      errors['requireUppercase'] = true;
+    }
+
+    // Require non-alphanumeric character
+    if (!/[^a-zA-Z0-9]/.test(value)) {
+      errors['requireNonAlphanumeric'] = true;
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
   }
 
   registerAs(role: string) {

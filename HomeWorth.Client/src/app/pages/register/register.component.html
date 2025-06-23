@@ -8,7 +8,7 @@
         <input class="block w-full outline outline-gray-300 hover:outline-gray-500 focus:outline-gray-500 rounded-full mb-3 p-2" 
         [ngClass]="{'outline-red-500': registrationForm.get('name')?.invalid && 
             (registrationForm.get('name')?.touched || registrationForm.get('name')?.dirty)}"
-        placeholder="name" formControlName="name" />
+        placeholder="User Name" formControlName="name" />
       </div>
       
       <!-- Email -->
@@ -16,7 +16,7 @@
         <input class="block w-full outline outline-gray-300 hover:outline-gray-500 focus:outline-gray-500 rounded-full mb-3 p-2" 
         [ngClass]="{'outline-red-500': registrationForm.get('email')?.invalid && 
             (registrationForm.get('email')?.touched || registrationForm.get('email')?.dirty)}"
-        placeholder="email address" formControlName="email" required />
+        placeholder="Email address" formControlName="email" required />
         
       </div>
 
@@ -25,7 +25,7 @@
         <input class="block w-full outline outline-gray-300 hover:outline-gray-500 focus:outline-gray-500 rounded-full mb-4 p-2" 
         [ngClass]="{'outline-red-500': registrationForm.get('password')?.invalid && 
             (registrationForm.get('password')?.touched || registrationForm.get('password')?.dirty)}"
-        placeholder="••••••••" type="password"
+        placeholder="••••••••" type="Password"
           formControlName="password" />
           <!-- Toggle Password Button -->
         <button type="button" (click)="togglePasswordVisibility()" class="absolute top-2 right-4 text-gray-500 hover:text-gray-700">
@@ -41,6 +41,16 @@
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
         </button>
+
+         <div class="text-red-500 text-sm mb-2 px-2" *ngIf="registrationForm.get('password')?.invalid && (registrationForm.get('password')?.touched || registrationForm.get('password')?.dirty)">
+          <div *ngIf="registrationForm.get('password')?.errors?.['required']">Password is required</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['minLength']">Password must be at least 10 characters long</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['requireDigit']">Password must contain at least one digit</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['requireLowercase']">Password must contain at least one lowercase letter</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['requireUppercase']">Password must contain at least one uppercase letter</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['requireNonAlphanumeric']">Password must contain at least one special character</div>
+        </div>
+
       </div>
 
 
@@ -50,6 +60,11 @@
         [ngClass]="{'outline-red-500': registrationForm.get('phoneNumber')?.invalid && 
             (registrationForm.get('phoneNumber')?.touched || registrationForm.get('phoneNumber')?.dirty)}"
         placeholder="Phone Number" formControlName="phoneNumber" required />
+
+         <div class="text-red-500 text-sm mb-2 px-2" *ngIf="registrationForm.get('phoneNumber')?.invalid && (registrationForm.get('phoneNumber')?.touched || registrationForm.get('phoneNumber')?.dirty)">
+          <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['required']">Phone number is required</span>
+          <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['phoneNumber']">Phone number must be exactly 10 digits</span>
+        </div>
       </div>
       <!-- First name -->
       <div>
