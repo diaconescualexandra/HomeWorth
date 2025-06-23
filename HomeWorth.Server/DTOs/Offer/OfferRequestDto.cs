@@ -7,7 +7,6 @@ namespace HomeWorth.Server.DTOs.Offer
   {
     public Guid propertyId { get; set; }
     [Required]
-    [MaxLength(20)]
     public double offeredAmount { get; set; }
   }
 }

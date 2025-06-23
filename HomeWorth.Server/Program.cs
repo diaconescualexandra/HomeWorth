@@ -17,16 +17,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-  { //options.SignIn.RequireConfirmedAccount = true;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    //options.Password.RequiredLength = 10;
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+  options.SignIn.RequireConfirmedAccount = true;
+  options.Password.RequireDigit = true;
+  options.Password.RequireLowercase = true;
+  options.Password.RequireUppercase = true;
+  options.Password.RequireNonAlphanumeric = true;
+  options.Password.RequiredLength = 10;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-  })
-  .AddRoles<IdentityRole>()
-  .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -61,8 +63,14 @@ builder.Services.AddAuthentication(options =>
       return Task.CompletedTask;
     }
   };
+})
+.AddCookie()
+.AddGoogle("Google", options =>
+{
+  options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+  options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+  options.CallbackPath = "/signin-google"; 
 });
-
 
 builder.Services.AddControllersWithViews();
 
@@ -127,7 +135,9 @@ builder.Services.AddScoped<IPropertyViewRepository, PropertyViewRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddSignalR();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 

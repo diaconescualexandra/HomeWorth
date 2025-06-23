@@ -9,7 +9,6 @@ namespace HomeWorth.Server.DTOs.Offer
     public Guid propertyId { get; set; }
     public string buyerId { get; set; }
     [Required]
-    [MaxLength(20)]
     public double offeredAmount { get; set; }
     [Required]
     public OfferStatus status { get; set; }
